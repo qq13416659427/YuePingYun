@@ -16,7 +16,7 @@
 
 <body>
     <img src="" alt="">
-    <script src="./jquery-1.12.4.js"></script>
+    <script src="./js/jquery-1.12.4.js"></script>
     <script>
         $.ajax({
             type: 'get',
@@ -37,6 +37,17 @@
                         success: function (backData) {
                             console.log(backData);
                             for (var j = 0; j < backData.playlist.tracks.length; j++) {
+                                $.ajax({
+                                    type: 'get',
+                                    url: 'http://183.237.67.218:3000/song/detail',
+                                    data: {
+                                        ids: backData.playlist.tracks[j].id
+                                    },
+                                    success: function (backData) {
+                                        console.log(backData);
+
+                                    },
+                                });
                                 $.ajax({
                                     type: 'get',
                                     url: 'http://183.237.67.218:3000/song/url',
