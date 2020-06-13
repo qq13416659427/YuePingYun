@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        img {
+            width: 200px;
+            height: 200px;
+
+        }
+    </style>
+</head>
+
+<body>
+    <img src="" alt="">
+    <script src="./jquery-1.12.4.js"></script>
+    <script>
+        $.ajax({
+            type: 'get',
+            url: 'http://183.237.67.218:3000/top/playlist/highquality',
+            data: {
+                limit: 8,
+            },
+            success: function (backData) {
+                $('img').attr('src', backData.playlists[0].coverImgUrl);
+                console.log(backData);
+                for (var i = 0; i < backData.playlists.length; i++) {
+                    $.ajax({
+                        type: 'get',
+                        url: 'http://183.237.67.218:3000/playlist/detail',
+                        data: {
+                            id: backData.playlists[i].id,
+                        },
+                        success: function (backData) {
+                            console.log(backData);
+                            for (var j = 0; j < backData.playlist.tracks.length; j++) {
+                                $.ajax({
+                                    type: 'get',
+                                    url: 'http://183.237.67.218:3000/song/url',
+                                    data: {
+                                        id: backData.playlist.tracks[j].id
+                                    },
+                                    success: function (backData) {
+                                        console.log(backData);
+                                    },
+                                });
+                            }
+                        }
+                    });
+                }
+
+            },
+        });
+    </script>
+</body>
+
+</html>
