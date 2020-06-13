@@ -497,7 +497,7 @@
 
         .BIGlist .songslist ul .search2 {
             overflow: auto;
-            background-color: rgba(43, 4, 44, 0.5);
+            background-color: rgba(117, 97, 117, 0.5);
             box-shadow: inset 0 0 10px white;
         }
 
@@ -955,7 +955,7 @@
                             }
                             else {
                                 $('.model_prompt').text('没有版权哦！');
-                                $('.bofang').removeClass('icon - zanting').addClass('icon - bofang');
+                                $('.bofang').removeClass('icon-zanting').addClass('icon-bofang');
                                 $('.musicimg').removeClass('playing');
                                 $('.bofang').attr('flag', 0);
                                 $('.model_prompt').stop(1, 1).animate({
@@ -1334,21 +1334,20 @@
                             id: id,
                         },
                         success: function (backData) {
-                            for (var j = 0; j < backData.playlist.tracks.length; j++) {
+                            for (var j = 0; j < backData.playlist.trackIds.length; j++) {
                                 $.ajax({
                                     type: 'get',
                                     url: 'http://183.237.67.218:3000/song/detail',
                                     data: {
-                                        ids: backData.playlist.tracks[j].id
+                                        ids: backData.playlist.trackIds[j].id
                                     },
                                     success: function (backData) {
                                         var reshtml = template('playlist_song', backData);
-                                        console.log(reshtml);
                                         $('.searchsong ul').append(reshtml);
                                     },
                                 });
-                                console.log('1');
                             }
+                            $('.search2').hide().siblings().show();
                         },
                     });
                 })
