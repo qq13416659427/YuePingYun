@@ -156,11 +156,6 @@
             margin: 5px 10px 5px 20px;
             background-color: white;
             vertical-align: top;
-            animation-name: xuanzhuan;
-            animation-duration: 10s;
-            animation-timing-function: linear;
-            animation-iteration-count: infinite;
-            animation-play-state: paused;
             cursor: pointer;
         }
 
@@ -318,6 +313,80 @@
 
         }
 
+        .background .lcdiv {
+            position: absolute;
+            display: none;
+            z-index: 120;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            /* background: url() no-repeat; */
+        }
+
+        .background .lcdiv .mohu {
+            position: absolute;
+            overflow: auto;
+            z-index: 121;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(27, 25, 27, 0.9);
+        }
+
+        .background .lcdiv .mohu .lcleft {
+            position: relative;
+            display: inline-block;
+            vertical-align: top;
+            width: 49%;
+            height: 80%;
+        }
+
+        .autoRotate {
+            animation-name: xuanzhuan;
+            animation-iteration-count: infinite;
+            animation-play-state: paused;
+            animation-timing-function: linear;
+            animation-duration: 10s;
+        }
+
+        .lcleft img:nth-child(1) {
+            position: absolute;
+            z-index: 2;
+            top: 0;
+            left: 50%;
+            transform-origin: 12px 12px;
+            transition: 1s;
+        }
+
+        .background .lcdiv .mohu .lcleft img:nth-child(2) {
+            position: absolute;
+            z-index: 1;
+            top: 40px;
+            left: 26%;
+        }
+
+        .background .lcdiv .mohu .lcleft img:nth-child(3) {
+            position: absolute;
+            z-index: 2;
+            top: 100px;
+            left: 36%;
+            width: 140px;
+            height: 140px;
+            border-radius: 140px;
+        }
+
+        .background .lcdiv .mohu .lcright {
+            display: inline-block;
+            width: 49%;
+            height: 80%;
+            background-color: white;
+        }
+
+        .background .lcdiv .mohu .comments {
+            width: 100%;
+            height: 800px;
+        }
+
         .BIGlist .melist {
             float: left;
             width: 30%;
@@ -388,6 +457,7 @@
         }
 
         .BIGlist .songslist {
+            position: relative;
             float: right;
             width: 69%;
             height: 100%;
@@ -438,19 +508,6 @@
         .searchsong::-webkit-scrollbar {
             display: none;
         }
-
-        /* .searchsong::-webkit-scrollbar-thumb {
-            border-radius: 10px;
-            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
-            background: #535353;
-        }
-
-        .searchsong::-webkit-scrollbar-track {
-            
-            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-            background: #797676;
-        } */
 
         .BIGlist .songslist ul li:nth-child(1) .searchsong ul {
             width: 100%;
@@ -664,6 +721,17 @@
             <div class="xian"></div>
         </header>
         <div class="background">
+            <div class="lcdiv">
+                <div class="mohu">
+                    <div class="lcleft">
+                        <img src="./img/player_bar.png" alt="">
+                        <img src="./img/disc.png" alt="" class="autoRotate">
+                        <img src="" alt="" class="autoRotate">
+                    </div>
+                    <div class="lcright"></div>
+                    <div class="comments"></div>
+                </div>
+            </div>
             <div class="BIGlist">
                 <div class="melist">
                     <p>MYSONG</p>
@@ -699,12 +767,14 @@
                             <hr class="hr2">
                         </li>
                     </ul>
+
                 </div>
             </div>
 
         </div>
         <div class="audiodiv">
-            <img src="./img/38c8b03edf8e28c1dd2b0beb159bc187dd339d27888ce-fEIMZ1_fw658.jpg" alt="" class="musicimg">
+            <img src="./img/38c8b03edf8e28c1dd2b0beb159bc187dd339d27888ce-fEIMZ1_fw658.jpg" alt=""
+                class="musicimg autoRotate">
             <span class="iconfont icon-shangyishou pre" flag=0></span>
             <span class="iconfont icon-bofang bofang" flag=0></span>
             <span class="iconfont icon-xiayishou next" flag=0></span>
@@ -825,14 +895,19 @@
                         else if ($('.melist_div li').length != 0 && $('audio').attr('src') == '') {
                             bofang.call($('.melist_div li')[0]);
                         }
-                        $(this).removeClass('icon-bofang').addClass('icon-zanting');
-                        $('.musicimg').addClass('playing');
+                        $(this).removeClass('icon-bofang').addClass('icon-zanting');//切换播放暂停键
+                        $('.musicimg').addClass('playing');//audio小图旋转
+                        $('.lcleft img:last').addClass('playing').prev().addClass('playing');//歌词界面圆盘旋转
+                        $('.lcleft img:first').css('transform', 'rotate(0)');//歌词界面的播放杆放下
                         document.querySelector('audio').play();
                         $('.bofang').attr('flag', 1);
                     }
                     else {
-                        $(this).removeClass('icon-zanting').addClass('icon-bofang');
-                        $('.musicimg').removeClass('playing');
+                        $(this).removeClass('icon-zanting').addClass('icon-bofang');//切换播放暂停键
+                        $('.musicimg').removeClass('playing');//audio小图停止
+                        $('.lcleft img:last').removeClass('playing').prev().removeClass('playing');//歌词界面圆盘旋转
+                        $('.lcleft img:first').css('transform', 'rotate(-25deg)');//歌词界面的播放杆收起
+
                         document.querySelector('audio').pause();
                         $('.bofang').attr('flag', 0);
                     };
@@ -935,7 +1010,9 @@
                         },
                         success: function (backData) {
                             $('.musicimg').attr('src', backData.songs[0].al.picUrl);
-                            console.log(backData.songs[0].al.picUrl);
+                            $('.lcdiv').css('background', 'url(' + backData.songs[0].al.picUrl + ') no-repeat 0/cover');
+                            $('.lcleft img:last').attr('src', backData.songs[0].al.picUrl).addClass('playing').prev().addClass('playing');
+
                         },
                     });
                     //根据LI的SONGID 及 音乐ID来获取音乐文件
@@ -952,6 +1029,7 @@
                                 $('.bofang').removeClass('icon-bofang').addClass('icon-zanting');//修改播放暂停按钮图标
                                 $('.musicimg').addClass('playing');//使音乐小图转动
                                 $('.bofang').attr('flag', 1);//修改FLAG标志
+
                                 console.log('1');
                             }
                             else {
@@ -964,6 +1042,7 @@
                                 }).stop(1, 1).animate({
                                     opacity: 0,
                                 }, 'slow');
+                                $('.pgbar .pg').css('width', 0).siblings().css('left', 0);
                                 console.log('2');
                             }
                         },
@@ -1351,7 +1430,21 @@
                             $('.search2').hide().siblings().show();
                         },
                     });
-                })
+                });
+                $('.musicimg').on('click', function () {
+                    //根据ID获取音乐图片
+                    $.ajax({
+                        type: 'get',
+                        url: DZ.song_detail,
+                        data: {
+                            ids: songs.sid
+                        },
+                        success: function (backData) {
+                            console.log(backData.songs[0].al.picUrl);
+                            $('.lcdiv').show();
+                        },
+                    });
+                });
 
             });
 
