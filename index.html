@@ -732,6 +732,7 @@
 
         <script src="./js/jquery-1.12.4.js"></script>
         <script src="./js/template-web.js"></script>
+        <script src="./js/http.js"></script>
         <script id="newsonglist" type="text/html">
                 {{each result.songs s}}
                     <li songid="{{s.id}}">
@@ -793,7 +794,7 @@
                     //初始化新歌
                     $.ajax({
                         type: 'get',
-                        url: 'http://183.237.67.218:3000/personalized/newsong',
+                        url: DZ.newsong,
                         success: function (backData) {
                             var reshtml = template('newsongs', backData);
                             $('.newsongs ul').append(reshtml);
@@ -804,7 +805,7 @@
                     //初始化歌单
                     $.ajax({
                         type: 'get',
-                        url: 'http://183.237.67.218:3000/top/playlist/highquality',
+                        url: DZ.highquality,
                         data: {
                             limit: 8,
                         },
@@ -885,7 +886,7 @@
                     }
                     $.ajax({
                         type: 'get',
-                        url: 'http://183.237.67.218:3000/search',
+                        url: DZ.search,
                         data: {
                             keywords: songname
                         },
@@ -906,7 +907,7 @@
                         }
                         $.ajax({
                             type: 'get',
-                            url: 'http://183.237.67.218:3000/search',
+                            url: DZ.search,
                             data: {
                                 keywords: songname
                             },
@@ -928,7 +929,7 @@
                     //根据ID获取音乐图片
                     $.ajax({
                         type: 'get',
-                        url: 'http://183.237.67.218:3000/song/detail',
+                        url: DZ.song_detail,
                         data: {
                             ids: sid
                         },
@@ -940,7 +941,7 @@
                     //根据LI的SONGID 及 音乐ID来获取音乐文件
                     $.ajax({
                         type: 'get',
-                        url: 'http://183.237.67.218:3000/song/url',
+                        url: DZ.song_url,
                         data: {
                             id: sid
                         },
@@ -1190,7 +1191,6 @@
                             break;
                         case '1':
                             sunxu(songs);
-
                             break;
                     };
                 }
@@ -1330,7 +1330,7 @@
                     $('.searchsong ul').html('');
                     $.ajax({
                         type: 'get',
-                        url: 'http://183.237.67.218:3000/playlist/detail',
+                        url: DZ.playlist_detail,
                         data: {
                             id: id,
                         },
@@ -1338,7 +1338,7 @@
                             for (var j = 0; j < backData.playlist.trackIds.length; j++) {
                                 $.ajax({
                                     type: 'get',
-                                    url: 'http://183.237.67.218:3000/song/detail',
+                                    url: DZ.song_detail,
                                     data: {
                                         ids: backData.playlist.trackIds[j].id
                                     },
