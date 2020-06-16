@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="./css/font_0tn4w05dd4bk/iconfont.css">
     <link rel="stylesheet" href="./css/font_u0dltk3t95j/iconfont.css">
     <link rel="stylesheet" href="./css/font_0oc0wmyhdyf/iconfont.css">
+    <link rel="stylesheet" href="./css/font_4zym3g63y32/iconfont.css">
     <style>
         body {
             -webkit-user-select: none;
@@ -333,6 +334,31 @@
             background-color: rgba(27, 25, 27, 0.9);
         }
 
+        .background .lcdiv .mohu::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .background .lcdiv .mohu::-webkit-scrollbar-thumb {
+            /* 轨道里的小条 */
+            border-radius: 10px;
+            box-shadow: inset 0 0 5px rgba(48, 47, 47, 0.2);
+            background: #383636;
+        }
+
+        .background .lcdiv .mohu::-webkit-scrollbar-track {
+            /*滚动条里面轨道*/
+            background: rgb(0, 0, 0);
+        }
+
+        .background .lcdiv .mohu .icon-suoxiao {
+            position: fixed;
+            top: 120px;
+            right: 215px;
+            font-size: 30px;
+            color: white;
+            cursor: pointer;
+        }
+
         .background .lcdiv .mohu .lcleft {
             position: relative;
             display: inline-block;
@@ -352,7 +378,7 @@
         .lcleft img:nth-child(1) {
             position: absolute;
             z-index: 2;
-            top: 0;
+            top: 0px;
             left: 50%;
             transform-origin: 12px 12px;
             transition: 1s;
@@ -361,17 +387,18 @@
         .background .lcdiv .mohu .lcleft img:nth-child(2) {
             position: absolute;
             z-index: 1;
-            top: 40px;
+            top: 70px;
             left: 26%;
+            width: 300px;
         }
 
         .background .lcdiv .mohu .lcleft img:nth-child(3) {
             position: absolute;
             z-index: 2;
-            top: 100px;
-            left: 36%;
-            width: 140px;
-            height: 140px;
+            top: 138px;
+            left: 37%;
+            width: 170px;
+            height: 170px;
             border-radius: 140px;
         }
 
@@ -379,12 +406,147 @@
             display: inline-block;
             width: 49%;
             height: 80%;
-            background-color: white;
+            color: white;
+        }
+
+        .background .lcdiv .mohu .lcright h2 {
+            line-height: 23px;
+        }
+
+        .background .lcdiv .mohu .lcright label {
+            vertical-align: top;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+
+        .background .lcdiv .mohu .lcright .zhuanji {
+            display: inline-block;
+            width: 100px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            font-size: 12px;
+        }
+
+        .background .lcdiv .mohu .lcright .geshou {
+            display: inline-block;
+            width: 60px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            font-size: 12px;
+        }
+
+        .background .lcdiv .mohu .lcright .lbox {
+            width: 80%;
+            height: 79%;
+            overflow: auto;
+        }
+
+        .background .lcdiv .mohu .lcright .lbox::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .background .lcdiv .mohu .lcright .lbox::-webkit-scrollbar-thumb {
+            /* 轨道里的小条 */
+            border-radius: 10px;
+            box-shadow: inset 0 0 5px rgba(48, 47, 47, 0.2);
+            background: #383636;
+        }
+
+        .background .lcdiv .mohu .lcright .lbox::-webkit-scrollbar-track {
+            /*滚动条里面轨道*/
+            background: rgba(0, 0, 0, 0);
+            border-right: 1px solid #383636;
+        }
+
+
+        .background .lcdiv .mohu .lcright .lbox ul {
+            margin-top: 20px;
+            width: 100%;
+            height: 500px;
+        }
+
+        .background .lcdiv .mohu .lcright .lbox ul li {
+            width: 100%;
+            line-height: 22px;
+            font-size: 14px;
+            color: rgb(196, 202, 207);
         }
 
         .background .lcdiv .mohu .comments {
             width: 100%;
             height: 800px;
+            margin-top: 20px;
+        }
+
+        .background .lcdiv .mohu .comments .left {
+            float: left;
+            width: 60%;
+            margin-left: 10%;
+            height: 1000px;
+        }
+
+        .background .lcdiv .mohu .comments .left h3 {
+            line-height: 10px;
+            color: rgb(240, 233, 233);
+        }
+
+        .background .lcdiv .mohu .comments .left hr {
+            height: 1px;
+            background-color: #383636;
+            border: 0px;
+        }
+
+        .background .lcdiv .mohu .comments .left p {
+            font-size: 13px;
+            margin-top: 20px;
+            color: rgb(240, 233, 233);
+        }
+
+        .background .lcdiv .mohu .comments .left ul {
+            width: 100%;
+        }
+
+        .background .lcdiv .mohu .comments .left ul li {
+            display: flex;
+            color: rgb(240, 233, 233);
+            padding: 20px 0px 20px;
+            border-top: 1px solid #383636;
+        }
+
+        .background .lcdiv .mohu .comments .left ul li:nth-last-child(1) {
+            border-bottom: 1px solid #383636;
+        }
+
+        .background .lcdiv .mohu .comments .left ul li img {
+            display: inline-block;
+            vertical-align: top;
+            background-color: aliceblue;
+            width: 40px;
+            height: 40px;
+            margin-right: 20px;
+            border-radius: 40px;
+        }
+
+        .background .lcdiv .mohu .comments .left ul li .pinlunbox {
+            flex: 1;
+        }
+
+        .background .lcdiv .mohu .comments .left ul li .pinlunbox span {
+            font-size: 13px;
+        }
+
+        .background .lcdiv .mohu .comments .left ul li .pinlunbox span:nth-child(1) {
+            color: rgb(65, 65, 197);
+        }
+
+
+
+        .background .lcdiv .mohu .comments .right {
+            float: right;
+            width: 25%;
+            height: 1000px;
         }
 
         .BIGlist .melist {
@@ -723,13 +885,41 @@
         <div class="background">
             <div class="lcdiv">
                 <div class="mohu">
+                    <span class="iconfont icon-suoxiao"></span>
                     <div class="lcleft">
                         <img src="./img/player_bar.png" alt="">
                         <img src="./img/disc.png" alt="" class="autoRotate">
                         <img src="" alt="" class="autoRotate">
                     </div>
-                    <div class="lcright"></div>
-                    <div class="comments"></div>
+                    <div class="lcright">
+                        <h2>112131</h2>
+                        <label for="">专辑:</label><span class="zhuanji">11111111111</span><label for="">歌手:</label><span
+                            class="geshou">11111111</span>
+                        <div class="lbox">
+                            <ul>
+                                <li>国际标准化组织</li>
+                                <li>国际标准化组织</li>
+                                <li>国际标准化组织</li>
+                                <li>国际标准化组织</li>
+                                <li>国际标准化组织</li>
+                                <li>国际标准化组织</li>
+                                <li>国际标准化组织</li>
+                                <li>国际标准化组织</li>
+                                <li>国际标准化组织</li>
+                                <li>国际标准化组织</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="comments">
+                        <div class="left">
+                            <h3>听友评论</h3>
+                            <hr>
+                            <p>精彩评论</p>
+                            <ul class="hot">
+                            </ul>
+                        </div>
+                        <div class="right"></div>
+                    </div>
                 </div>
             </div>
             <div class="BIGlist">
@@ -789,7 +979,7 @@
             <div class="ztime">
                 <span class="oldtime">0:00</span>
             </div>
-            <!--声音控制     -->
+            <!--声音控制-->
             <div class="sound">
                 <span class="iconfont icon-shengyin laba" flag=1></span>
                 <div class="soundbar">
@@ -836,6 +1026,16 @@
             <li songid="{{songs[0].id}}">
                 <span class="ssname">{{songs[0].name}}</span><span class="spname">{{songs[0].ar[0].name}}</span><span class="iconfont icon-add-fill1 ADD" style="display:none;"></span>
             </li>
+          </script>
+        <script id="hot_pinglun" type="text/html">
+            {{each hotComments}}
+            <li>
+                <img src="{{$value.user.avatarUrl}}" alt="">
+                <div class="pinlunbox">
+                <span class="pname">{{$value.user.nickname}}:</span><span class="pinglun">{{$value.content}}</span>
+                </div>
+            </li>
+            {{/each}}
           </script>
         <script>
             $(function () {
@@ -907,7 +1107,6 @@
                         $('.musicimg').removeClass('playing');//audio小图停止
                         $('.lcleft img:last').removeClass('playing').prev().removeClass('playing');//歌词界面圆盘旋转
                         $('.lcleft img:first').css('transform', 'rotate(-25deg)');//歌词界面的播放杆收起
-
                         document.querySelector('audio').pause();
                         $('.bofang').attr('flag', 0);
                     };
@@ -1001,7 +1200,7 @@
                     var sid = $(this).attr('songid');
                     songs.ele = $(this);
                     songs.sid = sid;
-                    //根据ID获取音乐图片
+                    //根据ID获取音乐图片,以及专辑名等
                     $.ajax({
                         type: 'get',
                         url: DZ.song_detail,
@@ -1009,10 +1208,24 @@
                             ids: sid
                         },
                         success: function (backData) {
-                            $('.musicimg').attr('src', backData.songs[0].al.picUrl);
-                            $('.lcdiv').css('background', 'url(' + backData.songs[0].al.picUrl + ') no-repeat 0/cover');
-                            $('.lcleft img:last').attr('src', backData.songs[0].al.picUrl).addClass('playing').prev().addClass('playing');
-
+                            $('.musicimg').attr('src', backData.songs[0].al.picUrl);//audio小图
+                            $('.lcdiv').css('background', 'url(' + backData.songs[0].al.picUrl + ') no-repeat 0/cover');//LCD父盒子背景为歌曲封面
+                            $('.lcleft img:last').attr('src', backData.songs[0].al.picUrl).addClass('playing').prev().addClass('playing');//圆盘及封面原图旋转
+                            $('.lcright h2').text(backData.songs[0].name).nextAll('.zhuanji').text(backData.songs[0].al.name).nextAll('.geshou').text(backData.songs[0].ar[0].name);
+                        },
+                    });
+                    //hot_pinglun 获得热门评论并渲染
+                    $.ajax({
+                        type: 'get',
+                        url: DZ.comment_hot,
+                        data: {
+                            id: sid,
+                            type: 0,
+                            limit: 10,
+                        },
+                        success: function (backData) {
+                            var reshtml = template('hot_pinglun', backData);
+                            $('.left .hot').html(reshtml);
                         },
                     });
                     //根据LI的SONGID 及 音乐ID来获取音乐文件
@@ -1445,6 +1658,9 @@
                         },
                     });
                 });
+                $('.icon-suoxiao').on('click', function () {
+                    $('.lcdiv').hide();
+                })
 
             });
 

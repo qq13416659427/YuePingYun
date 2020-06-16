@@ -1,0 +1,29 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<!--
+2013-9-30: Created.
+-->
+<svg>
+<metadata>
+Created by iconfont
+</metadata>
+<defs>
+
+<font id="iconfont" horiz-adv-x="1024" >
+  <font-face
+    font-family="iconfont"
+    font-weight="500"
+    font-stretch="normal"
+    units-per-em="1024"
+    ascent="896"
+    descent="-128"
+  />
+    <missing-glyph />
+    
+    <glyph glyph-name="suoxiao" unicode="&#58927;" d="M128 832h768a64 64 0 0 0 64-64v-768a64 64 0 0 0-64-64H128a64 64 0 0 0-64 64V768a64 64 0 0 0 64 64z m512-274.752V736a32 32 0 0 1-64 0v-256a32 32 0 0 1 32-32h256a32 32 0 1 1 0 64h-178.752l201.408 201.344a32 32 0 0 1-45.312 45.312L640 557.248z m-256-346.496V32a32 32 0 1 1 64 0v256a32 32 0 0 1-32 32h-256a32 32 0 0 1 0-64h178.752l-201.408-201.344a32 32 0 0 1 45.312-45.312L384 210.752z"  horiz-adv-x="1024" />
+
+    
+
+
+  </font>
+</defs></svg>

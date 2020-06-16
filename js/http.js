@@ -8,6 +8,7 @@
         song_detail: JD + '/song/detail',//歌曲详细
         song_url: JD + '/song/url',//查询歌曲地址
         playlist_detail: JD + '/playlist/detail',//歌单详细
+        comment_hot: JD + '/comment/hot',//热门评论
     }
     w.DZ = DZ;
 })(window)
