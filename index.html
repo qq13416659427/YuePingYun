@@ -469,9 +469,13 @@
 
         .background .lcdiv .mohu .lcright .lbox ul li {
             width: 100%;
-            line-height: 22px;
+            line-height: 40px;
             font-size: 14px;
-            color: rgb(196, 202, 207);
+            color: rgb(101, 103, 105);
+        }
+
+        .background .lcdiv .mohu .lcright .lbox ul .bai {
+            color: white;
         }
 
         .background .lcdiv .mohu .comments {
@@ -897,16 +901,6 @@
                             class="geshou">11111111</span>
                         <div class="lbox">
                             <ul>
-                                <li>国际标准化组织</li>
-                                <li>国际标准化组织</li>
-                                <li>国际标准化组织</li>
-                                <li>国际标准化组织</li>
-                                <li>国际标准化组织</li>
-                                <li>国际标准化组织</li>
-                                <li>国际标准化组织</li>
-                                <li>国际标准化组织</li>
-                                <li>国际标准化组织</li>
-                                <li>国际标准化组织</li>
                             </ul>
                         </div>
                     </div>
@@ -1037,6 +1031,11 @@
             </li>
             {{/each}}
           </script>
+        <script id="lyc" type="text/html">
+            {{each}}
+            <li>{{$value}}</li>
+            {{/each}}
+        </script>
         <script>
             $(function () {
                 var songs = {};//当前歌曲对象及ID
@@ -1048,6 +1047,7 @@
                 }
                 (function () {
                     //初始化获取个人歌曲
+                    songs.lycnum = 0;//记录当前歌词
                     var shuju;
                     songJSON = localStorage.getItem('JSON');
                     if (songJSON == null || songJSON == '') {//当获取的json为NULL时赋值其为'',当为''的时候说明是有JSON属性但是没VALUE避免后面出错，防止init标志为1.
@@ -1131,26 +1131,29 @@
                     }
                 });
                 //当音乐播放触发事件
-                document.querySelector('audio').onplay = function () {
-                    //音乐播放持续性触发
-                    document.querySelector('audio').ontimeupdate = function () {
-                        var sumtime = document.querySelector('audio').currentTime;
-                        var end = document.querySelector('audio').duration;
-                        var m = Math.floor(sumtime / 60);
-                        var s = parseInt(sumtime % 60);
-                        if (s < 10) {
-                            s = '0' + s;
-                        };
-                        $('.newtime').text(m + ":" + s);
-                        var bfb = (sumtime / end * 100).toFixed(2);
-                        bfb += '%';
-                        if ($('.pgbar>.yuan').attr('flag') == 0) {
-
-                            $('.pgbar .pg').css('width', bfb);
-                            $('.pgbar .yuan').css('left', bfb);
-                        };//加载条延缓，保证进度条拖拉不受限制。
+                document.querySelector('audio').ontimeupdate = function () {
+                    var sumtime = document.querySelector('audio').currentTime;
+                    var end = document.querySelector('audio').duration;
+                    var m = Math.floor(sumtime / 60);
+                    var s = parseInt(sumtime % 60);
+                    if (s < 10) {
+                        s = '0' + s;
                     };
-                }
+                    var thistime = '0' + m + ":" + s;
+                    $('.newtime').text(thistime);
+                    var bfb = (sumtime / end * 100).toFixed(2);
+                    bfb += '%';
+                    if ($('.pgbar>.yuan').attr('flag') == 0) {
+
+                        $('.pgbar .pg').css('width', bfb);
+                        $('.pgbar .yuan').css('left', bfb);
+                    };//进度条小圆松开FALG为0，进度条更新
+                    if (sumtime > songs.nowtime[songs.lycnum]) {
+                        $('.lbox li').eq(songs.lycnum).addClass('bai').siblings().removeClass('bai');
+                        songs.lycnum++;
+                    }
+                };
+
                 //搜索栏的搜索按钮
                 $('.icon-sousuosearch82').on('click', function () {
                     var songname = $('input').val().trim();
@@ -1197,6 +1200,7 @@
                 });
                 //点击li播放歌曲的封装函数
                 function bofang() {
+                    songs.lycnum = 0;
                     var sid = $(this).attr('songid');
                     songs.ele = $(this);
                     songs.sid = sid;
@@ -1226,6 +1230,44 @@
                         success: function (backData) {
                             var reshtml = template('hot_pinglun', backData);
                             $('.left .hot').html(reshtml);
+                        },
+                    });
+                    //渲染歌词
+                    $.ajax({
+                        type: 'get',
+                        url: DZ.lyrict,
+                        data: {
+                            id: sid,
+                        },
+                        success: function (backData) {
+                            var sum = [];
+                            var m = [];
+                            var s = [];
+                            var nowtime = [];
+                            var now = backData.lrc.lyric;
+                            var newnum = now.split(/(\[[\d\:\.]{0,}\])/);
+                            var lyc = [];
+                            var time = [];
+                            for (var i = 1; i < newnum.length; i++) {
+                                if (i % 2 == 1) {
+                                    time[time.length] = newnum[i];
+                                }
+                                else {
+                                    lyc[lyc.length] = newnum[i];
+                                }
+                            }
+                            for (var i = 0; i < time.length; i++) {
+                                sum[i] = time[i].split(/[\[\]]/)[1];
+                                sum[i] = sum[i].split(/\:/);
+                                m[i] = Number(sum[i][0]);
+                                s[i] = Number(sum[i][1]);
+                                nowtime[i] = m[i] * 60 + s[i];
+                            }
+                            var reshtml = template('lyc', lyc);
+                            $('.lbox ul').html(reshtml);
+                            songs.nowtime = nowtime;
+                            console.log(songs.nowtime.length);
+
                         },
                     });
                     //根据LI的SONGID 及 音乐ID来获取音乐文件
@@ -1271,7 +1313,7 @@
                             s = '0' + s;
                         };
 
-                        $('.oldtime').text(m + ":" + s);
+                        $('.oldtime').text('0' + m + ":" + s);
 
                     }
 
@@ -1335,12 +1377,32 @@
                     //3.鼠标松开
                     //鼠标松开也可以在按下之后注册：因为如果鼠标没有按下，不可能触发松开事件
                     document.onmouseup = function (e) {
+                        var sumtime = document.querySelector('audio').currentTime;
                         $('.pgbar .yuan').hide();
                         var end = document.querySelector('audio').duration;
                         var bfb = parseInt(newwidth) / parseInt($('.pgbar').css('width'));
                         document.getElementById('vi').currentTime = parseInt(end * bfb);
                         $('.pgbar .yuan').attr('flag', 0);
                         //移除鼠标移动事件
+
+                        if (sumtime < songs.nowtime[songs.lycnum]) {
+                            while (songs.lycnum--) {
+                                if (sumtime > songs.nowtime[songs.lycnum]) {
+                                    $('.lbox li').eq(songs.lycnum).addClass('bai').siblings().removeClass('bai');
+                                    break;
+                                }
+                            }
+                        }
+                        else if (sumtime > songs.nowtime[songs.lycnum]) {
+                            while (songs.lycnum++) {
+                                if (sumtime < songs.nowtime[songs.lycnum]) {
+                                    --songs.lycnum;
+                                    $('.lbox li').eq(songs.lycnum).addClass('bai').siblings().removeClass('bai');
+                                    break;
+                                }
+                            }
+                        }
+
 
                         document.onmousemove = null;
                         document.onmouseup = null;
