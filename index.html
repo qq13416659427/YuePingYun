@@ -875,7 +875,7 @@
     <div class="BIG">
         <header>
             <div class="headmain">
-                <img src="./img/5790030b1e1e57b0548d43a2216a9bbe.jpg" alt="" class="LOGO">
+                <img src="./img/5790030b1e1e57b0548d43a2216a9bbe.jpg" alt="" class="LOGO" draggable="false">
                 <span class="LOGOfont">乐评云</span>
                 <span class="left"><i class="iconfont icon-fangxiangsanjiao-xiangzuo"></i></span>
                 <span class="right"><i class="iconfont icon-fangxiangsanjiao-xiangyou"></i></span>
@@ -891,9 +891,9 @@
                 <div class="mohu">
                     <span class="iconfont icon-suoxiao"></span>
                     <div class="lcleft">
-                        <img src="./img/player_bar.png" alt="">
-                        <img src="./img/disc.png" alt="" class="autoRotate">
-                        <img src="" alt="" class="autoRotate">
+                        <img src="./img/player_bar.png" alt="" draggable="false">
+                        <img src="./img/disc.png" alt="" class="autoRotate" draggable="false">
+                        <img src="" alt="" class="autoRotate" draggable="false">
                     </div>
                     <div class="lcright">
                         <h2>112131</h2>
@@ -958,7 +958,7 @@
         </div>
         <div class="audiodiv">
             <img src="./img/38c8b03edf8e28c1dd2b0beb159bc187dd339d27888ce-fEIMZ1_fw658.jpg" alt=""
-                class="musicimg autoRotate">
+                class="musicimg autoRotate" draggable="false">
             <span class="iconfont icon-shangyishou pre" flag=0></span>
             <span class="iconfont icon-bofang bofang" flag=0></span>
             <span class="iconfont icon-xiayishou next" flag=0></span>
@@ -1008,12 +1008,12 @@
           </script>
         <script id="newsongs" type="text/html">
             {{each result}}
-            <li songid="{{$value.song.id}}"><img src="{{$value.picUrl}}" alt=""></li>
+            <li songid="{{$value.song.id}}"><img src="{{$value.picUrl}}" alt="" draggable="false"></li>
             {{/each}}
           </script>
         <script id="playlist" type="text/html">
             {{each playlists}}
-            <li songid="{{$value.id}}"><img src="{{$value.coverImgUrl}}" alt=""></li>
+            <li songid="{{$value.id}}"><img src="{{$value.coverImgUrl}}" alt="" draggable="false"></li>
             {{/each}}
           </script>
         <script id="playlist_song" type="text/html">
@@ -1048,6 +1048,7 @@
                 (function () {
                     //初始化获取个人歌曲
                     songs.lycnum = 0;//记录当前歌词
+                    songs.lboxtop = 0;
                     var shuju;
                     songJSON = localStorage.getItem('JSON');
                     if (songJSON == null || songJSON == '') {//当获取的json为NULL时赋值其为'',当为''的时候说明是有JSON属性但是没VALUE避免后面出错，防止init标志为1.
@@ -1151,6 +1152,12 @@
                     if (sumtime > songs.nowtime[songs.lycnum]) {
                         $('.lbox li').eq(songs.lycnum).addClass('bai').siblings().removeClass('bai');
                         songs.lycnum++;
+                        if (songs.lycnum > 4) {
+                            songs.lboxtop += 40;
+                            $('.lbox').scrollTop(songs.lboxtop);
+                            console.log(songs.lboxtop);
+
+                        }
                     }
                 };
 
@@ -1377,10 +1384,11 @@
                     //3.鼠标松开
                     //鼠标松开也可以在按下之后注册：因为如果鼠标没有按下，不可能触发松开事件
                     document.onmouseup = function (e) {
-                        var sumtime = document.querySelector('audio').currentTime;
+
                         $('.pgbar .yuan').hide();
                         var end = document.querySelector('audio').duration;
                         var bfb = parseInt(newwidth) / parseInt($('.pgbar').css('width'));
+                        var sumtime = parseInt(end * bfb);
                         document.getElementById('vi').currentTime = parseInt(end * bfb);
                         $('.pgbar .yuan').attr('flag', 0);
                         //移除鼠标移动事件
@@ -1388,6 +1396,13 @@
                         if (sumtime < songs.nowtime[songs.lycnum]) {
                             while (songs.lycnum--) {
                                 if (sumtime > songs.nowtime[songs.lycnum]) {
+                                    if (songs.lycnum <= 4) {
+                                        songs.lboxtop = 0;
+                                    }
+                                    else {
+                                        songs.lboxtop = (songs.lycnum - 4) * 40;
+                                    }
+                                    $('.lbox').scrollTop(songs.lboxtop);
                                     $('.lbox li').eq(songs.lycnum).addClass('bai').siblings().removeClass('bai');
                                     break;
                                 }
@@ -1397,6 +1412,13 @@
                             while (songs.lycnum++) {
                                 if (sumtime < songs.nowtime[songs.lycnum]) {
                                     --songs.lycnum;
+                                    if (songs.lycnum <= 4) {
+                                        songs.lboxtop = 0;
+                                    }
+                                    else {
+                                        songs.lboxtop = (songs.lycnum - 4) * 40;
+                                    }
+                                    $('.lbox').scrollTop(songs.lboxtop);
                                     $('.lbox li').eq(songs.lycnum).addClass('bai').siblings().removeClass('bai');
                                     break;
                                 }
