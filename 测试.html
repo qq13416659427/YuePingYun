@@ -5,59 +5,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <style>
-        img {
-            width: 200px;
-            height: 200px;
 
-        }
-    </style>
 </head>
 
 <body>
-    <img src="" alt="">
     <script src="./js/jquery-1.12.4.js"></script>
     <script>
-        var sum = [];
-        var m = [];
-        var s = [];
         $.ajax({
             type: 'get',
-            url: 'http://183.237.67.218:3000/lyric',
+            url: 'http://183.237.67.218:3000/top/playlist/highquality',
             data: {
-                id: 1365879370,
+                limit: 8,
             },
             success: function (backData) {
-                console.log(backData.lrc.lyric);
-                var now = backData.lrc.lyric;
-                var newnum = now.split(/(\[[\d\:\.]{0,}\])/);
-                var lyc = [];
-                var com = [];
-                for (var i = 1; i < newnum.length; i++) {
-                    if (i % 2 == 1) {
-                        com[com.length] = newnum[i];
-                    }
-                    else {
-                        lyc[lyc.length] = newnum[i];
-                    }
-                }
-                console.log(lyc);
-                console.log(com);
-
-                for (var i = 0; i < com.length; i++) {
-                    sum[i] = com[i].split(/[\[\]]/)[1];
-                    sum[i] = sum[i].split(/\:/);
-                    m[i] = Number(sum[i][0]);
-                    s[i] = Number(sum[i][1]);
-
-                }
-                console.log(m);
-                console.log(s);
-
+                console.log(backData);
 
             },
         });
     </script>
+
 </body>
 
 </html>

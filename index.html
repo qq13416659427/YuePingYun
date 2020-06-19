@@ -17,6 +17,8 @@
         body {
             -webkit-user-select: none;
             background-image: linear-gradient(to right, rgb(153, 0, 255), rgb(97, 39, 92), rgb(29, 66, 71), black);
+            margin: 0px;
+            padding: 0px;
         }
 
         div {
@@ -288,6 +290,7 @@
 
         .audiodiv .model {
             position: absolute;
+            z-index: 120;
             left: 855px;
             top: 10px;
             font-size: 19px;
@@ -300,7 +303,7 @@
             position: relative;
             width: 100%;
             height: 500px;
-            background: url(./img/back.jpg) no-repeat;
+            background: url(./img/3back.jpg) no-repeat;
             background-size: cover;
         }
 
@@ -720,7 +723,7 @@
 
         .BIGlist .songslist ul .search2 {
             overflow: auto;
-            background-color: rgba(117, 97, 117, 0.5);
+            /* background-color: rgba(117, 97, 117, 0.5); */
             box-shadow: inset 0 0 10px white;
         }
 
@@ -821,13 +824,36 @@
         }
 
         .BIGlist .songslist ul .search2 .playlist li {
+            position: relative;
             float: left;
             height: 160px;
             margin-left: 6.6%;
             margin-top: 20px;
             width: 20%;
-            background-color: #535353;
             cursor: pointer;
+        }
+
+        .BIGlist .songslist ul .search2 .playlist li .cover {
+            position: absolute;
+            display: none;
+            width: 100%;
+            height: 100%;
+            left: 0px;
+            right: 0px;
+            background-color: rgba(36, 34, 34, 0.3);
+        }
+
+        .BIGlist .songslist ul .search2 .playlist li .cover span {
+            color: white;
+            font-size: 12px;
+        }
+
+        .BIGlist .songslist ul .search2 .playlist li:hover {
+            box-shadow: 0px 0px 10px #888888;
+        }
+
+        .BIGlist .songslist ul .search2 .playlist li:hover .cover {
+            display: block;
         }
 
         .BIGlist .songslist ul .search2 .playlist li img {
@@ -852,8 +878,8 @@
         .model_prompt {
             display: block;
             position: absolute;
-            z-index: 100;
-            background-color: white;
+            z-index: 300;
+            background-color: whit0e;
             opacity: 0;
             border-radius: 20px;
             top: 306px;
@@ -870,7 +896,7 @@
 </head>
 
 <body>
-    <audio autoplay loop src="" id="vi"></audio>
+    <audio autoplay src="" id="vi"></audio>
     <div class="model_prompt"></div>
     <div class="BIG">
         <header>
@@ -912,7 +938,16 @@
                             <ul class="hot">
                             </ul>
                         </div>
-                        <div class="right"></div>
+                        <div class="right">
+                            <h3>包含这首歌的歌单</h3>
+                            <hr>
+                            <ul>
+                                <li>
+
+                                </li>
+                            </ul>
+                            <h3>相似歌曲</h3>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -946,7 +981,6 @@
                             <p>热门歌单</p>
                             <hr class="hr1">
                             <ul class="playlist">
-
                             </ul>
                             <hr class="hr2">
                         </li>
@@ -1013,7 +1047,7 @@
           </script>
         <script id="playlist" type="text/html">
             {{each playlists}}
-            <li songid="{{$value.id}}"><img src="{{$value.coverImgUrl}}" alt="" draggable="false"></li>
+            <li songid="{{$value.id}}"><div class="cover"><span>{{$value.name}}</span></div><img src="{{$value.coverImgUrl}}" alt="" draggable="false"></li>
             {{/each}}
           </script>
         <script id="playlist_song" type="text/html">
@@ -1024,7 +1058,7 @@
         <script id="hot_pinglun" type="text/html">
             {{each hotComments}}
             <li>
-                <img src="{{$value.user.avatarUrl}}" alt="">
+                <img src="{{$value.user.avatarUrl}}" alt="" draggable='false'>
                 <div class="pinlunbox">
                 <span class="pname">{{$value.user.nickname}}:</span><span class="pinglun">{{$value.content}}</span>
                 </div>
@@ -1049,6 +1083,8 @@
                     //初始化获取个人歌曲
                     songs.lycnum = 0;//记录当前歌词
                     songs.lboxtop = 0;
+                    songs.nowtime = [];
+                    songs.lyc = [];
                     var shuju;
                     songJSON = localStorage.getItem('JSON');
                     if (songJSON == null || songJSON == '') {//当获取的json为NULL时赋值其为'',当为''的时候说明是有JSON属性但是没VALUE避免后面出错，防止init标志为1.
@@ -1145,18 +1181,15 @@
                     var bfb = (sumtime / end * 100).toFixed(2);
                     bfb += '%';
                     if ($('.pgbar>.yuan').attr('flag') == 0) {
-
                         $('.pgbar .pg').css('width', bfb);
                         $('.pgbar .yuan').css('left', bfb);
                     };//进度条小圆松开FALG为0，进度条更新
-                    if (sumtime > songs.nowtime[songs.lycnum]) {
+                    if (sumtime >= songs.nowtime[songs.lycnum]) {
                         $('.lbox li').eq(songs.lycnum).addClass('bai').siblings().removeClass('bai');
                         songs.lycnum++;
                         if (songs.lycnum > 4) {
                             songs.lboxtop += 40;
                             $('.lbox').scrollTop(songs.lboxtop);
-                            console.log(songs.lboxtop);
-
                         }
                     }
                 };
@@ -1196,7 +1229,6 @@
                                 keywords: songname
                             },
                             success: function (backData) {
-                                console.log(backData);
                                 var reshtml = template('newsonglist', backData);
                                 $('.searchsong>ul').html(reshtml);
                             }
@@ -1205,9 +1237,28 @@
                     };
 
                 });
+                //歌词及时间的排序（冒泡排序法）
+                function bubbleSort(sum) {
+                    console.log(sum);
+                    var len = sum.nowtime.length;
+                    for (var i = 0; i < len; i++) {
+                        for (var j = 0; j < len - 1 - i; j++) {
+                            if (sum.nowtime[j] > sum.nowtime[j + 1]) {        //相邻元素两两对比
+                                var temp = sum.nowtime[j + 1];        //元素交换
+                                sum.nowtime[j + 1] = sum.nowtime[j];
+                                sum.nowtime[j] = temp;
+                                var comtemp = sum.lyc[j + 1];
+                                sum.lyc[j + 1] = sum.lyc[j];
+                                sum.lyc[j] = comtemp;
+                            }
+                        }
+                    }
+                }
                 //点击li播放歌曲的封装函数
                 function bofang() {
                     songs.lycnum = 0;
+                    songs.lboxtop = 0;
+                    $('.lbox').scrollTop(0);
                     var sid = $(this).attr('songid');
                     songs.ele = $(this);
                     songs.sid = sid;
@@ -1247,15 +1298,15 @@
                             id: sid,
                         },
                         success: function (backData) {
-                            var sum = [];
-                            var m = [];
-                            var s = [];
-                            var nowtime = [];
-                            var now = backData.lrc.lyric;
-                            var newnum = now.split(/(\[[\d\:\.]{0,}\])/);
-                            var lyc = [];
-                            var time = [];
-                            for (var i = 1; i < newnum.length; i++) {
+                            var sum = [];//功能类似与TEMP变量用于转接
+                            var m = [];//分钟
+                            var s = [];//秒
+                            var ntime = [];//时间数组
+                            var now = backData.lrc.lyric;//存储AJAX 歌词数据
+                            var newnum = now.split(/(\[[\d\:\.]{0,}\])/);//用正则表达式切割
+                            var lyc = [];//歌词数组
+                            var time = [];//最开始带[]的时间数组
+                            for (var i = 1; i < newnum.length; i++) {//将歌词数组划分出来
                                 if (i % 2 == 1) {
                                     time[time.length] = newnum[i];
                                 }
@@ -1263,20 +1314,21 @@
                                     lyc[lyc.length] = newnum[i];
                                 }
                             }
-                            for (var i = 0; i < time.length; i++) {
+                            for (var i = 0; i < time.length; i++) {//对数组进行切割，生成最终的时间数组
                                 sum[i] = time[i].split(/[\[\]]/)[1];
                                 sum[i] = sum[i].split(/\:/);
                                 m[i] = Number(sum[i][0]);
                                 s[i] = Number(sum[i][1]);
-                                nowtime[i] = m[i] * 60 + s[i];
+                                ntime[i] = m[i] * 60 + s[i];
                             }
-                            var reshtml = template('lyc', lyc);
-                            $('.lbox ul').html(reshtml);
-                            songs.nowtime = nowtime;
-                            console.log(songs.nowtime.length);
-
+                            songs.lyc = lyc;//给歌曲的歌词数组赋值
+                            songs.nowtime = ntime;//给歌曲的时间数组赋值
+                            bubbleSort(songs);//给时间和歌词排序
+                            var reshtml = template('lyc', songs.lyc);//创建歌词模板对象
+                            $('.lbox ul').html(reshtml);//渲染歌词板
                         },
                     });
+
                     //根据LI的SONGID 及 音乐ID来获取音乐文件
                     $.ajax({
                         type: 'get',
@@ -1285,14 +1337,11 @@
                             id: sid
                         },
                         success: function (backData) {
-                            console.log(backData);
                             $('audio').attr('src', backData.data[0].url);
                             if (backData.data[0].url) {
                                 $('.bofang').removeClass('icon-bofang').addClass('icon-zanting');//修改播放暂停按钮图标
                                 $('.musicimg').addClass('playing');//使音乐小图转动
                                 $('.bofang').attr('flag', 1);//修改FLAG标志
-
-                                console.log('1');
                             }
                             else {
                                 $('.model_prompt').text('没有版权哦！');
@@ -1305,7 +1354,6 @@
                                     opacity: 0,
                                 }, 'slow');
                                 $('.pgbar .pg').css('width', 0).siblings().css('left', 0);
-                                console.log('2');
                             }
                         },
                     });
@@ -1313,15 +1361,12 @@
                     //音乐加载完成触发的函数
                     document.querySelector('audio').oncanplaythrough = function () {
                         var sumtime = document.querySelector('audio').duration;
-                        console.log(sumtime);
                         var m = Math.floor(sumtime / 60);
                         var s = parseInt(sumtime % 60);
                         if (s < 10) {
                             s = '0' + s;
                         };
-
                         $('.oldtime').text('0' + m + ":" + s);
-
                     }
 
                 }
@@ -1334,10 +1379,11 @@
                     $('.pgbar>.yuan').show();//移入进度条显示小圆
                 }).on('mouseleave', function (e) {
                     $('.pgbar>.yuan').hide();//移出隐藏
-                }).on('mousedown', function (e) {
+                }).on('click', function (e) {
                     e.stopPropagation();
                     if (e.button == 0) {
                         document.querySelector('audio').pause();//先短暂暂停防止oncanplaythrough事件无限触发导致进度条出错
+
                         var end = document.querySelector('audio').duration;
                         var tiao = e.offsetX;
                         var yuan = tiao;
@@ -1345,11 +1391,47 @@
                         $(this).find('.pg').css('width', tiao);//修改进度条显示宽度
                         $(this).find('.yuan').css('left', yuan);//修改小圆位置
                         document.getElementById('vi').currentTime = parseInt(end * bfb);
+                        var sumtime = document.getElementById('vi').currentTime;
                         if ($('.bofang').attr('flag') == 1) {//当标志为1也就是播放按钮为播放的时候才能启动音乐，这里是为了暂停时加快进度且不播放音乐
                             document.querySelector('audio').play();
                         }
+                        if (sumtime < songs.nowtime[songs.lycnum]) {
+                            while (songs.lycnum--) {
+                                if (sumtime >= songs.nowtime[songs.lycnum]) {
+                                    if (songs.lycnum <= 4) {
+                                        songs.lboxtop = 0;
+                                    }
+                                    else {
+                                        songs.lboxtop = (songs.lycnum - 4) * 40;
+                                    }
+                                    $('.lbox').scrollTop(songs.lboxtop);
+                                    $('.lbox li').eq(songs.lycnum).addClass('bai').siblings().removeClass('bai');
+                                    break;
+                                }
+                            }
+                        }
+                        else if (sumtime > songs.nowtime[songs.lycnum]) {
+                            while (songs.lycnum++) {
+                                if (sumtime <= songs.nowtime[songs.lycnum] || songs.lycnum == songs.nowtime.length - 1) {
+                                    --songs.lycnum;
+                                    if (songs.lycnum <= 4) {
+                                        songs.lboxtop = 0;
+                                    }
+                                    else {
+                                        songs.lboxtop = (songs.lycnum - 4) * 40;
+                                    }
+                                    $('.lbox').scrollTop(songs.lboxtop);
+                                    $('.lbox li').eq(songs.lycnum).addClass('bai').siblings().removeClass('bai');
+                                    break;
+                                }
+                            }
+                        }
+
+
                     }
+
                 });
+
                 //防止圆球与进度条点击事情冒泡
                 $('.pgbar>.yuan').on('click', function (e) {
                     e.stopPropagation();
@@ -1384,18 +1466,19 @@
                     //3.鼠标松开
                     //鼠标松开也可以在按下之后注册：因为如果鼠标没有按下，不可能触发松开事件
                     document.onmouseup = function (e) {
-
+                        e.stopPropagation();
                         $('.pgbar .yuan').hide();
                         var end = document.querySelector('audio').duration;
                         var bfb = parseInt(newwidth) / parseInt($('.pgbar').css('width'));
                         var sumtime = parseInt(end * bfb);
+
                         document.getElementById('vi').currentTime = parseInt(end * bfb);
                         $('.pgbar .yuan').attr('flag', 0);
                         //移除鼠标移动事件
 
                         if (sumtime < songs.nowtime[songs.lycnum]) {
                             while (songs.lycnum--) {
-                                if (sumtime > songs.nowtime[songs.lycnum]) {
+                                if (sumtime >= songs.nowtime[songs.lycnum]) {
                                     if (songs.lycnum <= 4) {
                                         songs.lboxtop = 0;
                                     }
@@ -1410,7 +1493,7 @@
                         }
                         else if (sumtime > songs.nowtime[songs.lycnum]) {
                             while (songs.lycnum++) {
-                                if (sumtime < songs.nowtime[songs.lycnum]) {
+                                if (sumtime <= songs.nowtime[songs.lycnum] || songs.lycnum == songs.nowtime.length - 1) {
                                     --songs.lycnum;
                                     if (songs.lycnum <= 4) {
                                         songs.lboxtop = 0;
@@ -1423,6 +1506,8 @@
                                     break;
                                 }
                             }
+
+
                         }
 
 
@@ -1532,14 +1617,12 @@
                     switch (flag) {
                         case 0:
                             $(this).removeClass('icon-ziyuanldpi2').addClass('icon-ziyuanldpi1');
-                            $('audio').attr('loop', 1);
                             $('.model_prompt').text('循环播放');
                             modelshow();
 
                             break;
                         case 1:
                             $(this).removeClass('icon-ziyuanldpi1').addClass('icon-ziyuanldpi');
-                            $('audio').removeAttr('loop');
                             $('.model_prompt').text('顺序播放');
                             modelshow();
                             break;
@@ -1563,10 +1646,14 @@
                     $('.bofang').removeClass('icon-zanting').addClass('icon-bofang');
 
                     switch (flag) {//根据FLAG选择触发的函数
-                        case '2': suiji(songs);
+                        case '2':
+                            suiji(songs);
                             break;
                         case '1':
                             sunxu(songs);
+                            break;
+                        case '0':
+                            songs.ele.trigger('click');
                             break;
                     };
                 }
@@ -1638,7 +1725,6 @@
                     console.log(songJSON);
                     if (songJSON == '') {
                         init = 0;
-                        console.log(init);
                     }
 
                 })
@@ -1737,14 +1823,15 @@
                             ids: songs.sid
                         },
                         success: function (backData) {
-                            console.log(backData.songs[0].al.picUrl);
                             $('.lcdiv').show();
+                            $('.lbox').scrollTop(songs.lboxtop);
                         },
                     });
                 });
                 $('.icon-suoxiao').on('click', function () {
                     $('.lcdiv').hide();
-                })
+                });
+
 
             });
 
