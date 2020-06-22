@@ -270,7 +270,7 @@
         }
 
         .audiodiv .sound .soundbar .pg {
-            width: 100%;
+            width: 50%;
             height: 100%;
             border-radius: 3px;
             background-color: rgb(204, 53, 53);
@@ -280,7 +280,7 @@
             position: absolute;
             width: 12px;
             height: 12px;
-            left: 83px;
+            left: 48px;
             top: 3px;
             border-radius: 15px;
             border: 1px solid black;
@@ -551,10 +551,70 @@
 
 
         .background .lcdiv .mohu .comments .right {
-            float: right;
-            width: 25%;
+            float: left;
+            margin-left: 40px;
+            width: 20%;
             height: 1000px;
         }
+
+        .background .lcdiv .mohu .comments .right h3 {
+            color: rgb(240, 233, 233);
+            font-weight: 400;
+        }
+
+        .background .lcdiv .mohu .comments .right hr {
+            height: 1px;
+            background-color: #383636;
+            border: 0px;
+        }
+
+        .background .lcdiv .mohu .comments .right .sx_playlist {
+            width: 100%;
+        }
+
+        .background .lcdiv .mohu .comments .right .sx_playlist li {
+            position: relative;
+            height: 50px;
+            width: 100%;
+            padding-top: 5px;
+            cursor: pointer;
+        }
+
+        .background .lcdiv .mohu .comments .right .sx_playlist li:hover .zg {
+            display: block;
+        }
+
+        .background .lcdiv .mohu .comments .right .sx_playlist li .zg {
+            display: none;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+            background-color: rgba(134, 131, 131, 0.2);
+        }
+
+        .background .lcdiv .mohu .comments .right .sx_playlist li img {
+            height: 40px;
+            width: 40px;
+        }
+
+        .background .lcdiv .mohu .comments .right .sx_playlist li div {
+            float: right;
+            width: 180px;
+            height: 100%;
+            vertical-align: top;
+        }
+
+        .background .lcdiv .mohu .comments .right .sx_playlist li div span {
+            display: block;
+            color: rgb(240, 233, 233);
+            font-size: 12px;
+        }
+
+        .background .lcdiv .mohu .comments .right .sx_playlist li div span:nth-child(2) {
+            color: #535353;
+        }
+
 
         .BIGlist .melist {
             float: left;
@@ -941,12 +1001,10 @@
                         <div class="right">
                             <h3>包含这首歌的歌单</h3>
                             <hr>
-                            <ul>
-                                <li>
-
-                                </li>
+                            <ul class="sx_playlist">
                             </ul>
                             <h3>相似歌曲</h3>
+                            <hr>
                         </div>
                     </div>
                 </div>
@@ -1065,6 +1123,18 @@
             </li>
             {{/each}}
           </script>
+        <script id="xs_playlist" type="text/html">
+            {{each playlists}}
+            <li songid={{$value.id}}>
+                <div class='zg'></div>
+                <img src="{{$value.coverImgUrl}}" alt="">
+                <div>
+                <span>{{$value.name}}</span>
+                <span>播放:{{$value.playCount>10000?$imports.floor($value.playCount/10000)+'万':$value.playCount}}</span>
+            </div>
+        </li>
+            {{/each}}
+        </script>
         <script id="lyc" type="text/html">
             {{each}}
             <li>{{$value}}</li>
@@ -1072,6 +1142,7 @@
         </script>
         <script>
             $(function () {
+                template.defaults.imports.floor = Math.floor;
                 var songs = {};//当前歌曲对象及ID
                 var mesongs = {};//个人歌曲对象
                 var songJSON;//存放个人歌曲JSON
@@ -1187,9 +1258,12 @@
                     if (sumtime >= songs.nowtime[songs.lycnum]) {
                         $('.lbox li').eq(songs.lycnum).addClass('bai').siblings().removeClass('bai');
                         songs.lycnum++;
-                        if (songs.lycnum > 4) {
+                        if (songs.lycnum > 3) {
                             songs.lboxtop += 40;
-                            $('.lbox').scrollTop(songs.lboxtop);
+                            // $('.lbox').scrollTop(songs.lboxtop);
+                            $('.lbox').stop(1, 0).animate({
+                                scrollTop: songs.lboxtop,
+                            }, 800);
                         }
                     }
                 };
@@ -1328,6 +1402,18 @@
                             $('.lbox ul').html(reshtml);//渲染歌词板
                         },
                     });
+                    //获取包含歌曲的歌单
+                    $.ajax({
+                        type: 'get',
+                        url: DZ.simi_playlist,
+                        data: {
+                            id: sid,
+                        },
+                        success: function (backData) {
+                            var reshtml = template('xs_playlist', backData);
+                            $('.sx_playlist').html(reshtml);
+                        },
+                    });
 
                     //根据LI的SONGID 及 音乐ID来获取音乐文件
                     $.ajax({
@@ -1398,11 +1484,11 @@
                         if (sumtime < songs.nowtime[songs.lycnum]) {
                             while (songs.lycnum--) {
                                 if (sumtime >= songs.nowtime[songs.lycnum]) {
-                                    if (songs.lycnum <= 4) {
+                                    if (songs.lycnum <= 3) {
                                         songs.lboxtop = 0;
                                     }
                                     else {
-                                        songs.lboxtop = (songs.lycnum - 4) * 40;
+                                        songs.lboxtop = (songs.lycnum - 3) * 40;
                                     }
                                     $('.lbox').scrollTop(songs.lboxtop);
                                     $('.lbox li').eq(songs.lycnum).addClass('bai').siblings().removeClass('bai');
@@ -1414,11 +1500,11 @@
                             while (songs.lycnum++) {
                                 if (sumtime <= songs.nowtime[songs.lycnum] || songs.lycnum == songs.nowtime.length - 1) {
                                     --songs.lycnum;
-                                    if (songs.lycnum <= 4) {
+                                    if (songs.lycnum <= 3) {
                                         songs.lboxtop = 0;
                                     }
                                     else {
-                                        songs.lboxtop = (songs.lycnum - 4) * 40;
+                                        songs.lboxtop = (songs.lycnum - 3) * 40;
                                     }
                                     $('.lbox').scrollTop(songs.lboxtop);
                                     $('.lbox li').eq(songs.lycnum).addClass('bai').siblings().removeClass('bai');
@@ -1479,11 +1565,11 @@
                         if (sumtime < songs.nowtime[songs.lycnum]) {
                             while (songs.lycnum--) {
                                 if (sumtime >= songs.nowtime[songs.lycnum]) {
-                                    if (songs.lycnum <= 4) {
+                                    if (songs.lycnum <= 3) {
                                         songs.lboxtop = 0;
                                     }
                                     else {
-                                        songs.lboxtop = (songs.lycnum - 4) * 40;
+                                        songs.lboxtop = (songs.lycnum - 3) * 40;
                                     }
                                     $('.lbox').scrollTop(songs.lboxtop);
                                     $('.lbox li').eq(songs.lycnum).addClass('bai').siblings().removeClass('bai');
@@ -1495,11 +1581,11 @@
                             while (songs.lycnum++) {
                                 if (sumtime <= songs.nowtime[songs.lycnum] || songs.lycnum == songs.nowtime.length - 1) {
                                     --songs.lycnum;
-                                    if (songs.lycnum <= 4) {
+                                    if (songs.lycnum <= 3) {
                                         songs.lboxtop = 0;
                                     }
                                     else {
-                                        songs.lboxtop = (songs.lycnum - 4) * 40;
+                                        songs.lboxtop = (songs.lycnum - 3) * 40;
                                     }
                                     $('.lbox').scrollTop(songs.lboxtop);
                                     $('.lbox li').eq(songs.lycnum).addClass('bai').siblings().removeClass('bai');
@@ -1582,8 +1668,8 @@
                     }
                     else {//为0的时候，拉到满
                         flag = 1;
-                        $('.soundbar .pg').css('width', 70);
-                        $('.soundbar .yuan').css('left', 83);
+                        $('.soundbar .pg').css('width', 35);
+                        $('.soundbar .yuan').css('left', 48);
                     }
                     $(this).attr('flag', flag);
                     switch (flag) {//根据FLAG值修改图标

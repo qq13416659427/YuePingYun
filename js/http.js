@@ -1,5 +1,5 @@
 (function (w) {
-    var JD = 'http://183.237.67.218:3000';
+    var JD = 'http://localhost:4000';
     var DZ = {
         baseURL: JD,
         newsong: JD + '/personalized/newsong',//新歌
@@ -9,7 +9,8 @@
         song_url: JD + '/song/url',//查询歌曲地址
         playlist_detail: JD + '/playlist/detail',//歌单详细
         comment_hot: JD + '/comment/hot',//热门评论
-        lyrict: JD + '/lyric'//歌词
+        lyrict: JD + '/lyric',//歌词
+        simi_playlist: JD + '/simi/playlist'//包含歌曲歌单
     }
     w.DZ = DZ;
 })(window)
