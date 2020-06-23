@@ -355,6 +355,7 @@
 
         .background .lcdiv .mohu .icon-suoxiao {
             position: fixed;
+            z-index: 300;
             top: 120px;
             right: 215px;
             font-size: 30px;
@@ -403,6 +404,12 @@
             width: 170px;
             height: 170px;
             border-radius: 140px;
+        }
+
+        .background .lcdiv .mohu .lcleft .shouchang {
+            border: 1px solid white;
+            font-size: 12px;
+            color: red;
         }
 
         .background .lcdiv .mohu .lcright {
@@ -568,11 +575,11 @@
             border: 0px;
         }
 
-        .background .lcdiv .mohu .comments .right .sx_playlist {
+        .background .lcdiv .mohu .comments .right ul {
             width: 100%;
         }
 
-        .background .lcdiv .mohu .comments .right .sx_playlist li {
+        .background .lcdiv .mohu .comments .right li {
             position: relative;
             height: 50px;
             width: 100%;
@@ -580,11 +587,11 @@
             cursor: pointer;
         }
 
-        .background .lcdiv .mohu .comments .right .sx_playlist li:hover .zg {
+        .background .lcdiv .mohu .comments .right li:hover .zg {
             display: block;
         }
 
-        .background .lcdiv .mohu .comments .right .sx_playlist li .zg {
+        .background .lcdiv .mohu .comments .right li .zg {
             display: none;
             position: absolute;
             width: 100%;
@@ -593,27 +600,29 @@
             background-color: rgba(134, 131, 131, 0.2);
         }
 
-        .background .lcdiv .mohu .comments .right .sx_playlist li img {
+        .background .lcdiv .mohu .comments .right li img {
             height: 40px;
             width: 40px;
         }
 
-        .background .lcdiv .mohu .comments .right .sx_playlist li div {
+        .background .lcdiv .mohu .comments .right li div {
             float: right;
             width: 180px;
             height: 100%;
             vertical-align: top;
         }
 
-        .background .lcdiv .mohu .comments .right .sx_playlist li div span {
+        .background .lcdiv .mohu .comments .right li div span {
             display: block;
             color: rgb(240, 233, 233);
             font-size: 12px;
         }
 
-        .background .lcdiv .mohu .comments .right .sx_playlist li div span:nth-child(2) {
+        .background .lcdiv .mohu .comments .right li div span:nth-child(2) {
             color: #535353;
         }
+
+        /* .background .lcdiv .mohu .comments .right .xs_songs li */
 
 
         .BIGlist .melist {
@@ -980,6 +989,8 @@
                         <img src="./img/player_bar.png" alt="" draggable="false">
                         <img src="./img/disc.png" alt="" class="autoRotate" draggable="false">
                         <img src="" alt="" class="autoRotate" draggable="false">
+                        <span class="shouchang">收藏</span>
+                        <span class="shouchang">下载</span>
                     </div>
                     <div class="lcright">
                         <h2>112131</h2>
@@ -1005,6 +1016,7 @@
                             </ul>
                             <h3>相似歌曲</h3>
                             <hr>
+                            <ul class="xs_songs"></ul>
                         </div>
                     </div>
                 </div>
@@ -1135,6 +1147,19 @@
         </li>
             {{/each}}
         </script>
+        <script id="xs_songs" type="text/html">
+            {{each songs}}
+            <li songid={{$value.id}}>
+                <div class='zg'></div>
+                <img src="{{$value.album.picUrl}}" alt="">
+                <div>
+                <span>{{$value.name}}</span>
+                <span>{{$value.artists[0].name}}</span>
+            </div>
+        </li>
+            {{/each}}
+        </script>
+
         <script id="lyc" type="text/html">
             {{each}}
             <li>{{$value}}</li>
@@ -1193,6 +1218,9 @@
                         },
                     });
                 })();//初始化数据
+                audio.addEventListener("canplaythrough", function () {
+                    // 音频可以不发生缓冲从头播放到结束
+                });
 
                 //播放键点击
                 $('.bofang').on('click', function () {
@@ -1410,11 +1438,30 @@
                             id: sid,
                         },
                         success: function (backData) {
+                            if (backData.playlists.length == 0) {
+                                $('.xs_songs').prevAll().hide();
+                            }
                             var reshtml = template('xs_playlist', backData);
                             $('.sx_playlist').html(reshtml);
                         },
                     });
+                    //相似歌曲
+                    $.ajax({
+                        type: 'get',
+                        url: DZ.simi_song,
+                        data: {
+                            id: sid,
+                        },
+                        success: function (backData) {
+                            if (backData.songs.length == 0) {
+                                $('.sx_playlist').nextAll().hide();
+                            }
+                            var reshtml = template('xs_songs', backData);
+                            $('.xs_songs').html(reshtml);
 
+
+                        },
+                    });
                     //根据LI的SONGID 及 音乐ID来获取音乐文件
                     $.ajax({
                         type: 'get',
@@ -1457,7 +1504,7 @@
 
                 }
                 //搜索列表歌曲点击播放
-                $('.searchsong').on('click', 'li', function () {
+                $('.searchsong,.xs_songs,.melist_div ul,.newsongs ul').on('click', 'li', function () {
                     bofang.call(this);
                 });
                 //进度条的相关事件
@@ -1814,10 +1861,10 @@
                     }
 
                 })
-                //个人歌曲点击播放
-                $('.melist_div ul').on('click', 'li', function (e) {
-                    bofang.call(this);
-                });
+                // //个人歌曲点击播放
+                // $('.melist_div ul').on('click', 'li', function (e) {
+                //     bofang.call(this);
+                // });
                 //个人歌曲列表的鼠标移入移出
                 $('.melist_div').on('mouseenter', function (e) {
                     $('.melist_div').parent().stop(1, 0).animate({
@@ -1868,12 +1915,12 @@
                     $('.newsongs ul li:last').insertBefore('.newsongs ul li:eq(1)');
                     $('.newsongs ul li:eq(0)').attr('id', 'fei');
                 });
-                //新歌点击播放
-                $('.newsongs ul').on('click', '#fei', function (e) {
-                    bofang.call($(this));
-                });
+                // //新歌点击播放
+                // $('.newsongs ul').on('click', '#fei', function (e) {
+                //     bofang.call($(this));
+                // });
                 //查看歌单
-                $('.playlist').on('click', 'li', function (e) {
+                $('.playlist,.sx_playlist').on('click', 'li', function (e) {
                     var id = $(this).attr('songid');
                     $('.searchsong ul').html('');
                     $.ajax({
@@ -1896,9 +1943,11 @@
                                     },
                                 });
                             }
-                            $('.search2').hide().siblings().show();
                         },
                     });
+                    $('.search2').hide().siblings().show();
+                    $('.lcdiv').hide();
+                    $('.BIGlist').show();
                 });
                 $('.musicimg').on('click', function () {
                     //根据ID获取音乐图片

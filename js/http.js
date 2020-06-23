@@ -10,7 +10,8 @@
         playlist_detail: JD + '/playlist/detail',//歌单详细
         comment_hot: JD + '/comment/hot',//热门评论
         lyrict: JD + '/lyric',//歌词
-        simi_playlist: JD + '/simi/playlist'//包含歌曲歌单
+        simi_playlist: JD + '/simi/playlist',//包含歌曲歌单
+        simi_song: JD + '/simi/song'//相似歌曲
     }
     w.DZ = DZ;
 })(window)
