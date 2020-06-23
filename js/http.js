@@ -1,5 +1,5 @@
 (function (w) {
-    var JD = 'http://localhost:4000';
+    var JD = 'http://localhost:3000';
     var DZ = {
         baseURL: JD,
         newsong: JD + '/personalized/newsong',//新歌
