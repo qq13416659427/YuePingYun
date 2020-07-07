@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="./css/font_u0dltk3t95j/iconfont.css">
     <link rel="stylesheet" href="./css/font_0oc0wmyhdyf/iconfont.css">
     <link rel="stylesheet" href="./css/font_4zym3g63y32/iconfont.css">
+    <link rel="stylesheet" href="./css/font_load/iconfont.css">
     <style>
         body {
             -webkit-user-select: none;
@@ -54,7 +55,7 @@
             width: 30px;
             border-radius: 30px;
             margin: 7px 10px 5px 30px;
-
+            cursor: pointer;
         }
 
         header .headmain .LOGOfont {
@@ -64,6 +65,7 @@
             font-size: 20px;
             font-family: Arial, sans-serif;
             vertical-align: top;
+            cursor: pointer;
         }
 
         header .headmain .left {
@@ -322,10 +324,19 @@
             display: none;
             z-index: 120;
             left: 0;
-            top: 0;
+            bottom: 0;
             width: 100%;
             height: 100%;
-            /* background: url() no-repeat; */
+            opacity: 1;
+            transform: scale(1, 1);
+            transform-origin: left bottom 0;
+            background-color: black;
+            transition: transform 0.5s linear, opacity 0.5s linear;
+        }
+
+        .background .go {
+            opacity: 0;
+            transform: scale(0, 0);
         }
 
         .background .lcdiv .mohu {
@@ -356,8 +367,8 @@
         .background .lcdiv .mohu .icon-suoxiao {
             position: fixed;
             z-index: 300;
-            top: 120px;
-            right: 215px;
+            top: 50px;
+            right: 80px;
             font-size: 30px;
             color: white;
             cursor: pointer;
@@ -626,7 +637,9 @@
 
 
         .BIGlist .melist {
-            float: left;
+            position: absolute;
+            left: 0;
+            top: 0;
             width: 30%;
             height: 100%;
             box-shadow: inset 0 0 10px white;
@@ -695,9 +708,10 @@
         }
 
         .BIGlist .songslist {
-            position: relative;
-            float: right;
-            width: 69%;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 70%;
             height: 100%;
             box-shadow: inset 0px 0px 10px white;
         }
@@ -745,6 +759,20 @@
 
         .searchsong::-webkit-scrollbar {
             display: none;
+        }
+
+        .BIGlist .songslist ul li:nth-child(1) .searchsong p {
+            font-size: 13px;
+            color: white;
+            margin-left: 64%;
+            transform: translate(-50%, 0px);
+        }
+
+        .BIGlist .songslist ul li:nth-child(1) .searchsong p i {
+            font-size: 13px;
+            display: inline-block;
+            animation-duration: 3s;
+
         }
 
         .BIGlist .songslist ul li:nth-child(1) .searchsong ul {
@@ -814,6 +842,7 @@
             position: relative;
             width: 500%;
             height: 100%;
+            margin-left: 1px;
         }
 
         .BIGlist .songslist ul .search2 .newsongs ul li {
@@ -958,7 +987,7 @@
             text-align: center;
             font-size: 18px;
             line-height: 60px;
-            color: black;
+            color: white;
 
         }
     </style>
@@ -1037,7 +1066,9 @@
                                 <span>歌手名</span>
                             </div>
                             <div class="searchsong">
-                                <ul>
+                                <p style="display: none;" id="load">加载中<i
+                                        class="iconfont icon-jiazai autoRotate playing"></i></p>
+                                <ul style="display: none;">
                                 </ul>
                             </div>
                         </li>
@@ -1218,9 +1249,6 @@
                         },
                     });
                 })();//初始化数据
-                audio.addEventListener("canplaythrough", function () {
-                    // 音频可以不发生缓冲从头播放到结束
-                });
 
                 //播放键点击
                 $('.bofang').on('click', function () {
@@ -1288,7 +1316,6 @@
                         songs.lycnum++;
                         if (songs.lycnum > 3) {
                             songs.lboxtop += 40;
-                            // $('.lbox').scrollTop(songs.lboxtop);
                             $('.lbox').stop(1, 0).animate({
                                 scrollTop: songs.lboxtop,
                             }, 800);
@@ -1364,6 +1391,7 @@
                     var sid = $(this).attr('songid');
                     songs.ele = $(this);
                     songs.sid = sid;
+                    sound();
                     //根据ID获取音乐图片,以及专辑名等
                     $.ajax({
                         type: 'get',
@@ -1501,6 +1529,7 @@
                         };
                         $('.oldtime').text('0' + m + ":" + s);
                     }
+
 
                 }
                 //搜索列表歌曲点击播放
@@ -1739,7 +1768,7 @@
                     if (flag > 2) {
                         flag = 0;
                     };
-                    //模仿模式提示函数
+                    //播放模式提示函数
                     function modelshow() {
                         $('.model_prompt').stop(1, 1).animate({
                             opacity: 0.5,
@@ -1787,6 +1816,8 @@
                             break;
                         case '0':
                             songs.ele.trigger('click');
+                            console.log(songs.ele);
+
                             break;
                     };
                 }
@@ -1867,18 +1898,19 @@
                 // });
                 //个人歌曲列表的鼠标移入移出
                 $('.melist_div').on('mouseenter', function (e) {
-                    $('.melist_div').parent().stop(1, 0).animate({
-                        width: '60%',
-                    }).siblings().stop(1, 0).animate({
+                    $('.melist_div').parent().siblings().stop(1, 0).animate({
                         width: '40%',
-                    });
+                    }).siblings().stop(1, 0).animate({
+                        width: '60%',
+                    })
+
                     $('.icon-add-fill').show();
 
                 }).on('mouseleave', function (e) {
                     $('.melist_div').parent().stop(1, 0).animate({
                         width: '30%',
                     }).siblings().stop(1, 0).animate({
-                        width: '69%',
+                        width: '70%',
                     });
                     $('.icon-add-fill').hide();
 
@@ -1886,9 +1918,11 @@
 
                 //切换搜索列表
                 $('.headmain .left').on('click', function (e) {
+                    $('.lcdiv').addClass('go');
                     $('.search1').hide().siblings().show();
                 });
                 $('.headmain .right').on('click', function (e) {
+                    $('.lcdiv').addClass('go');
                     $('.search2').hide().siblings().show();
                 });
 
@@ -1923,31 +1957,42 @@
                 $('.playlist,.sx_playlist').on('click', 'li', function (e) {
                     var id = $(this).attr('songid');
                     $('.searchsong ul').html('');
+                    $('.searchsong ul').hide();
+                    $('#load').show();
                     $.ajax({
                         type: 'get',
                         url: DZ.playlist_detail,
                         data: {
                             id: id,
                         },
-                        success: function (backData) {
-                            for (var j = 0; j < backData.playlist.trackIds.length; j++) {
+                        success: function (backData1) {
+                            for (let j = 0; j < backData1.playlist.trackIds.length; j++) {
                                 $.ajax({
                                     type: 'get',
                                     url: DZ.song_detail,
                                     data: {
-                                        ids: backData.playlist.trackIds[j].id
+                                        ids: backData1.playlist.trackIds[j].id
                                     },
                                     success: function (backData) {
                                         var reshtml = template('playlist_song', backData);
                                         $('.searchsong ul').append(reshtml);
+                                        console.log(j);
+                                        if (j == backData1.playlist.trackIds.length - 1) {
+                                            $('#load').hide();
+                                            $('.searchsong ul').show();
+                                        }
                                     },
                                 });
                             }
                         },
                     });
-                    $('.search2').hide().siblings().show();
-                    $('.lcdiv').hide();
-                    $('.BIGlist').show();
+
+                    $('.lcdiv').addClass('go');
+                    setTimeout(() => {
+                        $('.BIGlist').show();
+                        $('.search2').hide().siblings().show();
+                    }, 600);
+
                 });
                 $('.musicimg').on('click', function () {
                     //根据ID获取音乐图片
@@ -1958,14 +2003,24 @@
                             ids: songs.sid
                         },
                         success: function (backData) {
+                            $('.lcdiv').removeClass('go');
                             $('.lcdiv').show();
                             $('.lbox').scrollTop(songs.lboxtop);
                         },
                     });
                 });
                 $('.icon-suoxiao').on('click', function () {
-                    $('.lcdiv').hide();
+                    $('.lcdiv').addClass('go');
                 });
+
+                $('.LOGOfont,.LOGO').on('click', function () {
+                    if ($('.lcdiv').hasClass('go')) {
+                        return
+                    }
+                    else {
+                        $('.lcdiv').addClass('go');
+                    }
+                })
 
 
             });
